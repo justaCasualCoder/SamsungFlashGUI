@@ -1,6 +1,6 @@
 @echo off
 if exist zenity.exe (
-  echo "Zenity was found!" 
+  echo "Zenity was found!"
 ) else (
   echo "Zenity Not Found!!!"
   timeout /t 10
