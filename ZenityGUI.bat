@@ -12,3 +12,4 @@ zenity --info --title="Plug in your Samsung device" --text=" To enter download m
 rd /s /q "temp"
 FOR /F %%g IN ('zenity --list --title="Samsung Download Flasher" --text "What Partition do you want to flash?" "Boot" "Recovery" "Data" "System"') do (SET PART=%%g && if not %ERRORLEVEL%==0 then echo "You chose to quit!")
 if "%PART%"=="" (echo Quiting... && exit 0)
+echo %PART%
