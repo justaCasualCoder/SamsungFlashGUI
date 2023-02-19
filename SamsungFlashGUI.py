@@ -1,8 +1,10 @@
 import os
 import platform
-from PySide2.QtWidgets import QApplication, QDialog, QGroupBox, QVBoxLayout, QHBoxLayout, QRadioButton, QPushButton, QLabel
 import shutil
 import sys
+
+from PySide2.QtWidgets import QApplication, QDialog, QFileDialog, QGroupBox, QVBoxLayout, QHBoxLayout, QRadioButton, QPushButton, QLabel
+
 operating_system = platform.system()
 temp = os.path.join(os.path.dirname(os.path.abspath(__file__)), "temp")
 if os.path.exists(temp):
@@ -16,6 +18,8 @@ elif operating_system == 'Windows':
     print("You are running Windows")
 else:
     print("Unsupported operating system:", operating_system)
+
+
 # Select the partition to be flashed
 class PartitionDialog(QDialog):
     def __init__(self, partitions, parent=None):
@@ -77,29 +81,51 @@ class PartitionDialog(QDialog):
         self.result = None
         self.reject()
 
+
 def select_partition(partitions):
-    app = QApplication([])
+    app = QApplication.instance() or QApplication([])
     dialog = PartitionDialog(partitions)
     result = dialog.exec_()
     partition = dialog.result
     dialog.deleteLater()
-    app.quit()
     return partition
+
 
 partitions = ["Boot", "Recovery", "Data", "System"]
 partition = select_partition(partitions)
-# Print selected Partiton
-print(partition)
+
+# Print selected Partition
+if partition == 'Boot' or partition == 'Recovery' or partition == 'Data' or partition == 'System':
+    print(f"{partition} selected")
+else:
+    print("Quiting....")
+    sys.exit(0)    
+
 def select_img_file():
-    app = QApplication([])
+    app = QApplication.instance() or QApplication([])
     options = QFileDialog.Options()
     options |= QFileDialog.DontUseNativeDialog
     options |= QFileDialog.ReadOnly
     file_filter = "IMG Files (*.img)"
     file_path, _ = QFileDialog.getOpenFileName(None, "Please select the *.IMG file to be flashed", os.path.expanduser("~"), file_filter, "", options=options)
-    app.quit()
     return file_path
 
 # Example usage:
 img_file = select_img_file()
-print(img_file)
+print(f"{img_file} Selected")
+if img_file == "":
+    print("Quiting....")
+    sys.exit(0)
+else:
+    heimdallcmd = f"sudo heimdall flash --{partition} {img_file}"
+    os.system(heimdallcmd)
+
+# Example usage:
+img_file = select_img_file()
+print(f"{img_file} Selected")
+if img_file == "":
+    print("Quiting....")
+    sys.exit(0)
+else:
+    heimdallcmd = f"sudo heimdall flash --{partition} {img_file}"
+    os.system(heimdallcmd)
