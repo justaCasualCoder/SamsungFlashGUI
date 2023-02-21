@@ -13,7 +13,6 @@ if os.path.exists(temp):
 
 if operating_system == 'Linux':
     print("You are running Linux!")
-    heimdall = operating_system
 elif operating_system == 'Windows':
     print("You are running Windows")
 else:
@@ -109,23 +108,16 @@ def select_img_file():
     file_filter = "IMG Files (*.img)"
     file_path, _ = QFileDialog.getOpenFileName(None, "Please select the *.IMG file to be flashed", os.path.expanduser("~"), file_filter, "", options=options)
     return file_path
-
 # Example usage:
 img_file = select_img_file()
-print(f"{img_file} Selected")
 if img_file == "":
-    print("Quiting....")
+    print("Quitting...")
     sys.exit(0)
 else:
-    heimdallcmd = f"sudo heimdall flash --{partition} {img_file}"
+    if operating_system == 'Windows':
+        heimdallcmd = f"heimdall/heimdall.exe flash --{partition} {img_file}"
+    else:
+        heimdallcmd = f"sudo heimdall flash --{partition} {img_file}"
     os.system(heimdallcmd)
 
-# Example usage:
-img_file = select_img_file()
-print(f"{img_file} Selected")
-if img_file == "":
-    print("Quiting....")
-    sys.exit(0)
-else:
-    heimdallcmd = f"sudo heimdall flash --{partition} {img_file}"
-    os.system(heimdallcmd)
+print("Flashing completed.")
