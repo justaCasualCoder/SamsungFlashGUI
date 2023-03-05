@@ -1,3 +1,8 @@
 
 temp/output.txt
 temp/test.txt
+build
+dist
+SamsungFlashGUI.spec
+test.spec
+test.py

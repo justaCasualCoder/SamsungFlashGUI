@@ -3,13 +3,14 @@ import platform
 import shutil
 import sys
 
-from PySide2.QtWidgets import QApplication, QDialog, QFileDialog, QGroupBox, QVBoxLayout, QHBoxLayout, QRadioButton, QPushButton, QLabel
+from PySide2.QtWidgets import QApplication, QDialog, QFileDialog, QGroupBox, QVBoxLayout, QHBoxLayout, QRadioButton, QPushButton, QLabel, QMessageBox
 
+cwd = os.path.dirname(os.path.abspath(__file__))
 operating_system = platform.system()
-temp = os.path.join(os.path.dirname(os.path.abspath(__file__)), "temp")
+temp = os.path.join(cwd, "temp")
 if os.path.exists(temp):
     print("Removing Temporary Directory...")
-    shutil.rmtree(temp) 
+    shutil.rmtree(temp)
 
 if operating_system == 'Linux':
     print("You are running Linux!")
@@ -98,7 +99,7 @@ if partition == 'Boot' or partition == 'Recovery' or partition == 'Data' or part
     print(f"{partition} selected")
 else:
     print("Quiting....")
-    sys.exit(0)    
+    sys.exit(0)
 
 def select_img_file():
     app = QApplication.instance() or QApplication([])
@@ -108,16 +109,33 @@ def select_img_file():
     file_filter = "IMG Files (*.img)"
     file_path, _ = QFileDialog.getOpenFileName(None, "Please select the *.IMG file to be flashed", os.path.expanduser("~"), file_filter, "", options=options)
     return file_path
-# Example usage:
-img_file = select_img_file()
-if img_file == "":
-    print("Quitting...")
-    sys.exit(0)
-else:
-    if operating_system == 'Windows':
-        heimdallcmd = f"heimdall/heimdall.exe flash --{partition} {img_file}"
-    else:
-        heimdallcmd = f"sudo heimdall flash --{partition} {img_file}"
-    os.system(heimdallcmd)
 
-print("Flashing completed.")
+
+if __name__ == "__main__":
+    partitions = ["Boot", "Recovery", "Data", "System"]
+
+    # Print selected Partition
+    if partition == 'Boot' or partition == 'Recovery' or partition == 'Data' or partition == 'System':
+        print(f"{partition} selected")
+    else:
+        print("Quiting....")
+        sys.exit(0)
+
+    img_file = select_img_file()
+    if img_file == "":
+        print("Quitting...")
+        sys.exit(0)
+    else:
+        if operating_system == 'Windows':
+            heimdallcmd = f"heimdall.exe flash --{partition} {img_file}"
+            chdir = os.path.join(cwd, "heimdall")
+            os.chdir(chdir)
+        else:
+            heimdallcmd = f"sudo heimdall flash --{partition} {img_file}"    
+        heimdalloutput = os.system(heimdallcmd)
+if str(heimdalloutput).find("ERROR: Failed to detect compatible download-mode device") != -1:
+    print("Operation Completed Successfully!")
+else:
+    app = QApplication.instance() or QApplication([])
+    msg_box = QMessageBox(QMessageBox.Critical, "Error", "Failed to detect compatible download-mode device", QMessageBox.Ok)
+    msg_box.exec_()
