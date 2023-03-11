@@ -2,9 +2,20 @@ import os
 import platform
 import shutil
 import sys
-
+import qdarktheme
 from PySide2.QtWidgets import QApplication, QDialog, QFileDialog, QGroupBox, QVBoxLayout, QHBoxLayout, QRadioButton, QPushButton, QLabel, QMessageBox
+from qdarktheme import load_stylesheet
+import qdarkgraystyle
+app = QApplication.instance() or QApplication([])
+app.setStyleSheet(qdarkgraystyle.load_stylesheet())
+def restart():
+    import sys
+    print("argv was",sys.argv)
+    print("sys.executable was", sys.executable)
+    print("restart now")
 
+    import os
+    os.execv(sys.executable, ['python'] + sys.argv)
 cwd = os.path.dirname(os.path.abspath(__file__))
 operating_system = platform.system()
 temp = os.path.join(cwd, "temp")
@@ -84,6 +95,7 @@ class PartitionDialog(QDialog):
 
 def select_partition(partitions):
     app = QApplication.instance() or QApplication([])
+    app.setStyleSheet(load_stylesheet())
     dialog = PartitionDialog(partitions)
     result = dialog.exec_()
     partition = dialog.result
@@ -113,14 +125,6 @@ def select_img_file():
 
 if __name__ == "__main__":
     partitions = ["Boot", "Recovery", "Data", "System"]
-
-    # Print selected Partition
-    if partition == 'Boot' or partition == 'Recovery' or partition == 'Data' or partition == 'System':
-        print(f"{partition} selected")
-    else:
-        print("Quiting....")
-        sys.exit(0)
-
     img_file = select_img_file()
     if img_file == "":
         print("Quitting...")
@@ -136,6 +140,11 @@ if __name__ == "__main__":
 if str(heimdalloutput).find("ERROR: Failed to detect compatible download-mode device") != -1:
     print("Operation Completed Successfully!")
 else:
+    print("No Heimdall devices were detected!")
+# Check if heimdall devices detected
+heimdall_devices_output = os.popen("heimdall detect").read()
+if not str(heimdall_devices_output).find("ERROR: Failed to detect compatible download-mode device:") != -1:
     app = QApplication.instance() or QApplication([])
-    msg_box = QMessageBox(QMessageBox.Critical, "Error", "Failed to detect compatible download-mode device", QMessageBox.Ok)
-    msg_box.exec_()
+    response = QMessageBox.question(None, "No Heimdall Devices Detected!", "No Heimdall devices detected! Do you want to restart the program?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+    if response == QMessageBox.Yes:
+        restart()
