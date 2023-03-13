@@ -1,4 +1,5 @@
 import os
+import argparse
 import platform
 import shutil
 import sys
@@ -6,8 +7,15 @@ import qdarktheme
 from PySide2.QtWidgets import QApplication, QDialog, QFileDialog, QGroupBox, QVBoxLayout, QHBoxLayout, QRadioButton, QPushButton, QLabel, QMessageBox
 from qdarktheme import load_stylesheet
 import qdarkgraystyle
+parser = argparse.ArgumentParser(description='Samsung Flash GUI Script')
+parser.add_argument('--dark', action='store_true', help='use dark mode' , default=0)
+args = parser.parse_args()
 app = QApplication.instance() or QApplication([])
-app.setStyleSheet(qdarkgraystyle.load_stylesheet())
+if args.dark:
+    print("Running in dark mode")
+    app.setStyleSheet(load_stylesheet())
+else:
+    print("Running in light mode")
 def restart():
     import sys
     print("argv was",sys.argv)
@@ -95,7 +103,6 @@ class PartitionDialog(QDialog):
 
 def select_partition(partitions):
     app = QApplication.instance() or QApplication([])
-    app.setStyleSheet(load_stylesheet())
     dialog = PartitionDialog(partitions)
     result = dialog.exec_()
     partition = dialog.result

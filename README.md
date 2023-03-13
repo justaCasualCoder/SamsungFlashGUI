@@ -16,14 +16,17 @@ In order to build the Python file into a portable executable , you have to insta
 
 On Windows 
 ```
-pyinst
-aller --onefile --noconsole --add-data "%cd%\heimdall:heimdall" SamsungFlashGUI.py 
+pyinstaller --onefile --noconsole --add-data "%cd%\heimdall:heimdall" SamsungFlashGUI.py 
 ```
 On Linux
 ```
 pyinstaller --onefile --noconsole --add-data "$(pwd)/heimdall:heimdall" SamsungFlashGUI.py
 ```
-###### Screenshots
+## Features
+- Support for Dark mode is being made ( can be beta-tested by using the --dark flag)
+- Ability to run on Linux and Windows
+- Can be built into a Linux executable or Windows EXE
+## Screenshots
 <img src="Images/FileSelect.png" width="600px" > <img src="Images/SelectPart.png" width="600px" >
 <img src="Images/FileSelectPy.png" width="600px">
 <img src="Images/PartSelectPy.png" width="600px">

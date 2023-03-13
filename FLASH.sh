@@ -31,7 +31,7 @@ case $? in
                 rm -r temp
                 exit 1 ;;
 esac
-zenity --question --icon-name=warning --text="Are you sure you want to continue? This may BRICK your device ! File $FILE selected " --title=WARNING
+zenity --question --icon-name=warning --text="Are you sure you want to continue? This may BRICK your device ! File /"$FILE" selected " --title=WARNING
 if [ $? -ne 0 ];
 then
 echo "Quiting..."
