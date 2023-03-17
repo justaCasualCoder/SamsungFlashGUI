@@ -4,16 +4,16 @@ import platform
 import shutil
 import sys
 import qdarktheme
-from PySide2.QtWidgets import QApplication, QDialog, QFileDialog, QGroupBox, QVBoxLayout, QHBoxLayout, QRadioButton, QPushButton, QLabel, QMessageBox
+from PySide6.QtWidgets import QApplication, QDialog, QFileDialog, QGroupBox, QVBoxLayout, QHBoxLayout, QRadioButton, QPushButton, QLabel, QMessageBox
 from qdarktheme import load_stylesheet
-import qdarkgraystyle
-parser = argparse.ArgumentParser(description='Samsung Flash GUI Script')
+parser = argparse.ArgumentParser(description='Samsung Flash GUI Script (This was only possible becasue of Heimdall and Pyside6!)')
 parser.add_argument('--dark', action='store_true', help='use dark mode' , default=0)
 args = parser.parse_args()
 app = QApplication.instance() or QApplication([])
 if args.dark:
     print("Running in dark mode")
-    app.setStyleSheet(load_stylesheet())
+    app.setStyleSheet(qdarktheme.load_stylesheet())
+    qdarktheme.enable_hi_dpi()
 else:
     print("Running in light mode")
 def restart():
@@ -54,6 +54,7 @@ class PartitionDialog(QDialog):
 
         # Add label for the partition selection
         label = QLabel("What Partition do you want to flash?", self)
+        
         label.setStyleSheet("font: 14pt Helvetica; margin-top: 20px; margin-bottom: 10px;")
         vbox.addWidget(label)
 
@@ -64,7 +65,8 @@ class PartitionDialog(QDialog):
 
         hbox = QHBoxLayout()
         group_box.setLayout(hbox)
-
+        
+       
         # Add radiobuttons for each partition
         for i, partition in enumerate(self.partitions):
             rb = QRadioButton(partition)
@@ -104,7 +106,7 @@ class PartitionDialog(QDialog):
 def select_partition(partitions):
     app = QApplication.instance() or QApplication([])
     dialog = PartitionDialog(partitions)
-    result = dialog.exec_()
+    result = dialog.exec()
     partition = dialog.result
     dialog.deleteLater()
     return partition
@@ -129,6 +131,18 @@ def select_img_file():
     file_path, _ = QFileDialog.getOpenFileName(None, "Please select the *.IMG file to be flashed", os.path.expanduser("~"), file_filter, "", options=options)
     return file_path
 
+part = ""
+if partition == "Recovery":
+    partition = "RECOVERY"
+elif partition == "Boot":
+    partition = "BOOT"
+elif partition == "System":
+    partition = "SYSTEM"
+elif partition == "Data":
+    partition = "DATA"
+else:
+    print("ERROR! - QUITING!")
+    exit(0)
 
 if __name__ == "__main__":
     partitions = ["Boot", "Recovery", "Data", "System"]
@@ -148,9 +162,6 @@ if str(heimdalloutput).find("ERROR: Failed to detect compatible download-mode de
     print("Operation Completed Successfully!")
 else:
     print("No Heimdall devices were detected!")
-# Check if heimdall devices detected
-heimdall_devices_output = os.popen("heimdall detect").read()
-if not str(heimdall_devices_output).find("ERROR: Failed to detect compatible download-mode device:") != -1:
     app = QApplication.instance() or QApplication([])
     response = QMessageBox.question(None, "No Heimdall Devices Detected!", "No Heimdall devices detected! Do you want to restart the program?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
     if response == QMessageBox.Yes:
