@@ -3,42 +3,42 @@ import argparse
 import platform
 import shutil
 import sys
+import subprocess
 import qdarktheme
 from PySide6.QtWidgets import QApplication, QDialog, QFileDialog, QGroupBox, QVBoxLayout, QHBoxLayout, QRadioButton, QPushButton, QLabel, QMessageBox
 from qdarktheme import load_stylesheet
 parser = argparse.ArgumentParser(description='Samsung Flash GUI Script (This was only possible becasue of Heimdall and Pyside6!)')
 parser.add_argument('--dark', action='store_true', help='use dark mode' , default=0)
+parser.add_argument('--easy', action='store_true', help='Easy mode')
 args = parser.parse_args()
 app = QApplication.instance() or QApplication([])
-if args.dark:
-    print("Running in dark mode")
-    app.setStyleSheet(qdarktheme.load_stylesheet())
-    qdarktheme.enable_hi_dpi()
-else:
-    print("Running in light mode")
+app.setStyleSheet(qdarktheme.load_stylesheet("auto"))
+qdarktheme.enable_hi_dpi()
 def restart():
-    import sys
-    print("argv was",sys.argv)
-    print("sys.executable was", sys.executable)
-    print("restart now")
-
-    import os
     os.execv(sys.executable, ['python'] + sys.argv)
 cwd = os.path.dirname(os.path.abspath(__file__))
 operating_system = platform.system()
-temp = os.path.join(cwd, "temp")
-if os.path.exists(temp):
-    print("Removing Temporary Directory...")
-    shutil.rmtree(temp)
-
 if operating_system == 'Linux':
     print("You are running Linux!")
 elif operating_system == 'Windows':
     print("You are running Windows")
 else:
     print("Unsupported operating system:", operating_system)
-
-
+    exit()
+if args.easy:
+    from adb_shell.adb_device import AdbDeviceTcp, AdbDeviceUsb
+    from adb_shell.auth.sign_pythonrsa import PythonRSASigner
+    from cryptography.hazmat.primitives.asymmetric import rsa
+    key = rsa.generate_private_key(
+    public_exponent=65537,
+    key_size=2048)
+    print(key)
+    from adb_shell.adb_device import AdbDeviceTcp, AdbDeviceUsb
+    from adb_shell.auth.sign_pythonrsa import PythonRSASigner
+    device = AdbDeviceUsb()
+    device.connect(rsa_keys=["~/.android/adbkey"])
+    codename = device.shell("getprop ro.product.device")
+    subprocess.call(['python', 'download-twrp.py'] , codename)
 # Select the partition to be flashed
 class PartitionDialog(QDialog):
     def __init__(self, partitions, parent=None):

@@ -20,17 +20,21 @@ echo Quiting... && exit 0
 mkdir temp
 if "%PART%"=="Data" (
 echo "Please see terminal output for progress"
-heimdall/heimdall.exe flash --RECOVERY %FILE%
+cd heimdall
+heimdall.exe flash --RECOVERY %FILE%
 )
 if "%PART%"=="Recovery" (
 echo "Please see terminal output for progress"
-heimdall/heimdall.exe flash --RECOVERY %FILE%
+cd heimdall
+heimdall.exe flash --RECOVERY %FILE%
 )
 if "%PART%"=="Boot" (
 echo "Please see terminal output for progress"
-heimdall/heimdall.exe flash --RECOVERY %FILE%
+cd heimdall
+heimdall.exe flash --RECOVERY %FILE%
 )
 if "%PART%"=="System" do (
 echo "Please see terminal output for progress"
-heimdall/heimdall.exe flash --RECOVERY %FILE%
+cd heimdall
+heimdall.exe flash --RECOVERY %FILE%
 )
