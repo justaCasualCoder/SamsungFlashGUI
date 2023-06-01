@@ -16,11 +16,11 @@ In order to build the Python file into a portable executable , you have to insta
 
 On Windows 
 ```
-pyinstaller --onefile --noconsole --add-data "%cd%\heimdall:heimdall" SamsungFlashGUI.py 
+pyinstaller --collect-all customtkinter -w --onefile --noconsole --add-data "%cd%\heimdall:heimdall" SamsungFlashGUI.py 
 ```
 On Linux
 ```
-pyinstaller --onefile --noconsole --add-data "$(pwd)/heimdall:heimdall" SamsungFlashGUI.py
+pyinstaller  --collect-all customtkinter -w --onefile --noconsole --add-data "$(pwd)/heimdall:heimdall" SamsungFlashGUI.py
 ```
 ## Features
 - Support for Dark mode is being made ( can be beta-tested by using the --dark flag)
