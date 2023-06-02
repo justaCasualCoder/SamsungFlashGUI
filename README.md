@@ -23,9 +23,10 @@ On Linux
 pyinstaller  --collect-all customtkinter -w --onefile --noconsole --add-data "$(pwd)/heimdall:heimdall" SamsungFlashGUI.py
 ```
 ## Features
-- Support for Dark mode is being made ( can be beta-tested by using the --dark flag)
 - Ability to run on Linux and Windows
 - Can be built into a Linux executable or Windows EXE
+## Known Issues
+- It dosent look the greatest in Linux
 ## Screenshots
 <img src="Images/FileSelect.png" width="600px" > <img src="Images/SelectPart.png" width="600px" >
 <img src="Images/FileSelectPy.png" width="600px">
