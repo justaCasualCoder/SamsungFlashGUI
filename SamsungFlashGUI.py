@@ -1,10 +1,13 @@
 # Only made possible by Heimdall
 import customtkinter
-from tkinter import filedialog as fd
-from tkinter.filedialog import askopenfilename
+import messagebox
 import os
 import sys
 import platform
+import xdialog
+if sys.platform == 'linux':
+        os.environ['QT_AUTO_SCREEN_SCALE_FACTOR'] = '1'
+
 def restart():
     os.execv(sys.executable, ['python'] + sys.argv)
 cwd = os.path.dirname(os.path.abspath(__file__))
@@ -48,18 +51,14 @@ else:
     exit()
 def file():
 	global file
-	filetypes = (
-        ('Image Files', '*.img'),
-        ('All files', '*.*')
-    )
-	file = askopenfilename(filetypes =filetypes)
+	file = xdialog.open_file("Please select a IMG File", filetypes=[("Image Files", "*.img")], multiple=False)
 	flash.configure(state="normal")
 	print(file)
 app = customtkinter.CTk()
 app.title("Samsung Flash GUI")
 app.geometry("450x200")
 label = customtkinter.CTkLabel(app , text = 'Please select the Partition / File you would like to flash' , font =("Poppins" , 15) )
-label.place(x=60 , y=0)
+label.place(x=25 , y=0)
 button = customtkinter.CTkButton(app, text="Select a File", command=file)
 button.grid(row=0, column=0 , padx=160, pady=50 )
 var1 = customtkinter.StringVar()
