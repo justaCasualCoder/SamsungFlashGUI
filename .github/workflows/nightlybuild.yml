@@ -26,15 +26,16 @@ jobs:
     - name: Build executable
       run: pyinstaller --onefile --noconsole --add-binary "/bin/heimdall:." --add-data "$(pwd)/python-logo-only.svg:." gui.py
       working-directory: ${{ github.workspace }}
-      
-    - name: Update Nightly Release
-      uses: andelf/nightly-release@main
-      env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Create info file
+      run: |
+         echo -e "ref: $GITHUB_REF \ncommit: $GITHUB_SHA\nbuild: $(date +"%Y-%m-%dT%H:%M:%SZ")" \
+         > dist/info.txt
+
+    - name: Update nightly release
+      uses: eine/tip@master
       with:
-          tag_name: nightly
-          name: 'Desktop App Nightly Release $$'
-          prerelease: true
-          body: 'TODO: Add nightly release notes'
-          files: |
-            ./dist/gui
+        tag: nightly
+        rm: true
+        token: ${{ secrets.GITHUB_TOKEN }}
+        files: dist/*.*
