@@ -33,7 +33,7 @@ jobs:
          > dist/info.txt
 
     - name: Update nightly release
-      uses: eine/tip@master
+      uses: pyTooling/Actions/releaser@r0
       with:
         tag: nightly
         rm: true
