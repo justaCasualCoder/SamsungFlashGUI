@@ -27,14 +27,6 @@ jobs:
       run: pyinstaller --onefile --noconsole --add-binary "/bin/heimdall:." --add-data "$(pwd)/python-logo-only.svg:." gui.py
       working-directory: ${{ github.workspace }}
 
-    - name: Bump version
-      id: bump
-      run: |
-        current_version=$(python -c "import json; print(json.load(open('package.json'))['version'])")
-        new_version=$(date +'%Y.%m.%d')
-        echo "::set-output name=new_version::$new_version"
-        echo "Bumping version from $current_version to $new_version"
-
     - name: Create release
       id: create_release
       uses: softprops/action-gh-release@v1
