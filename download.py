@@ -18,7 +18,7 @@ except:
 	print("E: Couldn't find a TWRP image for " + device)
 	sys.exit(1)
 
-dlurl = "https://dl.twrp.me" + dllinks[0]["href"].replace(".html", "")
+dlurl = "https://dl.twrp.me" + dllinks[1]["href"].replace(".html", "")
 
 imgname = dlurl.split("/")[-1]
 

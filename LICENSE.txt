@@ -1,3 +1,7 @@
+This project is licensed under the GNU General Public License version 3 (GPLv3), except for the following portions:
+
+- Portions of this project are licensed under the MIT License, as indicated in individual  files.
+
                     GNU GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007
 

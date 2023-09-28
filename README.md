@@ -1,33 +1,55 @@
 # SamsungFlashGUI
-A Python Script that can be used to easily flash .img files to any Samsung phone
-### Running
-Download the file corresponding to your OS. 
 
-To run on Windows , open a Command Prompt in the directory where it was downloaded and run 
+A Python Script that can be used to easily flash .img files to any Samsung phone
+
+## WARNING!!
+
+THIS PROJECT IS CURRENTLY BEING REDONE AND IS VERY UNSTABLE!
+
+### Running
+
+Install PySide6
+
+```bash
+pip install PySide6
 ```
-SamsungFlashGUI.exe
+
+Install Heimdall (Example on Debian):
+
+```bash
+sudo apt install heimdall
 ```
-To run on Linux , open a Terminal in the directory where it was downloaded and run 
-```
-./SamsungFlashGUILinux
-```
+
+Download / save `gui.py` and run it. 
+
 #### Building
+
 In order to build the Python file into a portable executable , you have to install [Pyinstaller](https://pyinstaller.org/en/stable/) and run the following command:
 
-On Windows 
+```bash
+pyinstaller --onefile --noconsole --add-binary "/bin/heimdall:." --add-data "$(pwd)/python-logo-only.svg:." gui.py
 ```
-pyinstaller --collect-all customtkinter -w --onefile --noconsole --add-data "%cd%\heimdall:heimdall" SamsungFlashGUI.py 
-```
-On Linux
-```
-pyinstaller  --collect-all customtkinter -w --onefile --noconsole --add-data "$(pwd)/heimdall:heimdall" SamsungFlashGUI.py
-```
-## Features
-- Ability to run on Linux and Windows
-- Can be built into a Linux executable or Windows EXE
-## Known Issues
-- It dosent look the greatest in Linux
-## Screenshots
-<img src="Images/FileSelect.png" width="600px" > <img src="Images/SelectPart.png" width="600px" >
-<img src="Images/FileSelectPy.png" width="600px">
-<img src="Images/PartSelectPy.png" width="600px">
+
+# Credits
+
+The following programs were used in the code:
+
+[Heimdall](https://github.com/Benjamin-Dobell/Heimdall) (Used to Flash Images)
+
+[Pyside6](https://doc.qt.io/qtforpython-6/quickstart.html) (Used for the GUI)
+
+[Python](https://www.python.org/) (What it is coded in)
+
+# Screenshots
+
+![](screenshots/main_window.png "Main Window")
+
+![](screenshots/about_window.png "About Window")
+
+# Why?
+
+- I wanted a easy way to flash `*IMG`'s to Samsung devices
+
+- The already made Heimdall-Frontend is awesome , but was overcomplicated for me.
+
+- WHY NOT
