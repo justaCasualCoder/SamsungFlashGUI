@@ -1,0 +1,45 @@
+name: Nightly Release
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Runs at midnight every day
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x' # Specify the Python version you need
+
+    - name: Install dependencies
+      run: pip install pyinstaller
+    - name: Install Heimdall
+      run: apt install heimdall -y
+
+    - name: Build executable
+      run: pyinstaller --onefile --noconsole --add-binary "/bin/heimdall:." --add-data "$(pwd)/python-logo-only.svg:." gui.py
+      working-directory: ${{ github.workspace }}
+
+    - name: Bump version
+      id: bump
+      run: |
+        current_version=$(python -c "import json; print(json.load(open('package.json'))['version'])")
+        new_version=$(date +'%Y.%m.%d')
+        echo "::set-output name=new_version::$new_version"
+        echo "Bumping version from $current_version to $new_version"
+
+    - name: Create release
+      id: create_release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          dist/gui
+        tag_name: ${{ steps.bump.outputs.new_version }}
+        title: Nightly Release ${{ steps.bump.outputs.new_version }}
+        token: ${{ secrets.GITHUB_TOKEN }}
