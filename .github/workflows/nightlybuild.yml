@@ -21,7 +21,7 @@ jobs:
     - name: Install dependencies
       run: pip install pyinstaller
     - name: Install Heimdall
-      run: apt install heimdall -y
+      run: sudo apt install heimdall -y
 
     - name: Build executable
       run: pyinstaller --onefile --noconsole --add-binary "/bin/heimdall:." --add-data "$(pwd)/python-logo-only.svg:." gui.py
