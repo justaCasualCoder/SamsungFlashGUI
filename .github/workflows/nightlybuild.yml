@@ -27,12 +27,22 @@ jobs:
       run: pyinstaller --onefile --noconsole --add-binary "/bin/heimdall:." --add-data "$(pwd)/python-logo-only.svg:." gui.py
       working-directory: ${{ github.workspace }}
 
+    - name: Set version and create tag
+      id: set_version
+      run: |
+        new_version=$(date +'%Y.%m.%d')
+        echo "Setting version to $new_version"
+        echo "::set-output name=new_version::$new_version"
+        git tag $new_version
+        git push origin $new_version
+
     - name: Create release
       id: create_release
       uses: softprops/action-gh-release@v1
       with:
         files: |
           dist/gui
-        tag_name: ${{ steps.bump.outputs.new_version }}
-        title: Nightly Release ${{ steps.bump.outputs.new_version }}
+        tag_name: ${{ steps.set_version.outputs.new_version }}
+        title: Nightly Release ${{ steps.set_version.outputs.new_version }}
         token: ${{ secrets.GITHUB_TOKEN }}
+
