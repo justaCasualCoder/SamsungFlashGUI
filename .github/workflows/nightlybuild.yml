@@ -1,0 +1,45 @@
+name: Nightly Release
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Runs at midnight every day
+  workflow_dispatch: {}
+  push:
+    paths:
+     - '.github/workflows/nightlybuild.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions: write-all
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x' # Specify the Python version you need
+
+    - name: Install dependencies
+      run: pip install pyinstaller PySide6
+    - name: Install Heimdall
+      run: sudo apt install heimdall-flash -y
+
+    - name: Build executable
+      run: pyinstaller --onefile --noconsole --add-binary "/bin/heimdall:." --add-data "$(pwd)/python-logo-only.svg:." gui.py && mv dist/gui dist/LinuxGUI
+      working-directory: ${{ github.workspace }}
+
+    - name: Create info file
+      run: |
+         echo -e "ref: $GITHUB_REF \ncommit: $GITHUB_SHA\nbuild: $(date +"%Y-%m-%dT%H:%M:%SZ")" \
+         > dist/info.txt
+
+    - name: Update nightly release
+      uses: pyTooling/Actions/releaser@r0
+      with:
+        tag: nightly
+        rm: true
+        token: ${{ secrets.GITHUB_TOKEN }}
+        files: dist/*
