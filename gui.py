@@ -1,4 +1,5 @@
 import sys
+import subprocess
 import os
 from PySide6.QtWidgets import *
 from PySide6.QtGui import *
@@ -17,6 +18,9 @@ class Form(QMainWindow):
         self.flash = QPushButton("Flash")
         self.buttoncheck = QComboBox()
         self.buttoncheck.addItems(["BOOT", "RECOVERY", "DATA" , "SYSTEM"])
+        self.outputbox = QTextEdit()
+        self.outputlabel = QLabel(self)
+        self.outputlabel.setText("<center>Output:<center>")
         layout = QVBoxLayout()
         hbox = QHBoxLayout()
         buttonbox = QHBoxLayout()
@@ -48,6 +52,9 @@ class Form(QMainWindow):
         layout.addLayout( buttonbox )
         layout.addLayout( hbox )
         layout.addWidget(self.flash)
+        layout.addWidget(self.outputlabel)
+        layout.addWidget(self.outputlabel)
+        layout.addWidget(self.outputbox)
         self.chooseimage.clicked.connect(self.Image) 
         self.flash.clicked.connect(self.flashimage)
     def Image(self):
@@ -71,7 +78,18 @@ class Form(QMainWindow):
         print(f"heimdall flash --{self.buttoncheck.currentText()} {filename}")
         # Portions of this project are using code from the Heimdall project, developed by Benjamin Dobell and other contributors, which is licensed under the MIT License.
         heimdallbin = os.path.abspath(os.path.join(cwd,'heimdall'))
-        os.system(f"if [ ! -f /bin/heimdall ]; then echo 'Using Local Heimdall' && {heimdallbin} flash --{self.buttoncheck.currentText()} {filename} ; else echo 'Using /bin/heimdall' && heimdall flash --{self.buttoncheck.currentText()} {filename} ; fi")
+        outvar = subprocess.run([f"if [ ! -f /bin/heimdall ]; then echo 'Using Local Heimdall' && {heimdallbin} flash --{self.buttoncheck.currentText()} {filename} ; else echo 'Using /bin/heimdall' && heimdall flash --{self.buttoncheck.currentText()} {filename} ; fi"] , stdout=subprocess.PIPE , shell=True , text=True , stderr=subprocess.PIPE)
+        self.outputbox.append(outvar.stdout)
+        self.outputbox.append(outvar.stderr)
+        if outvar.returncode != 0:
+            info = ""
+            if "Failed to open file" in outvar.stderr:
+                print("File dosent exist")
+                info = "File dosent exist"
+            if "ERROR: Failed to detect compatible download-mode device." in outvar.stderr:
+                print("No Device attached")
+                info = "Failed to detect compatible download-mode device."
+            button = QMessageBox.critical(self , "Error" , f"Heimdall failed with Exit status {outvar.returncode}: \n{info}")
     def aboutdialog(self):
         logo = os.path.abspath(os.path.join(cwd,'python-logo-only.svg'))
         text = f"""
