@@ -10,3 +10,4 @@ SamsungFlashGUInew.py
 old
 t.py
 *.spec
+.venv/

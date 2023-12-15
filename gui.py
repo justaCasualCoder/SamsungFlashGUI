@@ -1,8 +1,8 @@
 import sys
 import subprocess
 import os
-from PySide6.QtWidgets import *
-from PySide6.QtGui import *
+from PySide6.QtWidgets import QApplication, QMainWindow, QLabel, QLineEdit, QPushButton, QComboBox, QTextEdit, QWidget, QVBoxLayout, QHBoxLayout, QFileDialog, QMessageBox
+from PySide6.QtGui import QAction
 cwd = os.path.dirname(os.path.abspath(__file__))
 os.chdir(cwd)
 class Form(QMainWindow):
