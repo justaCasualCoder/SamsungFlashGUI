@@ -12,7 +12,7 @@ class Form(QMainWindow):
         self.setWindowTitle("SamsungFlashGUI")
         # Create widgets
         self.label = QLabel(self)
-        self.label.setText("Please select your IMG to Flash & partiton")
+        self.label.setText("Please select your IMG to Flash & Partiton.")
         self.filenameentry = QLineEdit("twrp.img")
         self.chooseimage = QPushButton("Choose Image")
         self.flash = QPushButton("Flash")
