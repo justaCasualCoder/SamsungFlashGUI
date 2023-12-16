@@ -1,6 +1,8 @@
 # SamsungFlashGUI
 
-A Python Script that can be used to easily flash .img files to any Samsung phone
+A Python Script that can be used to easily flash .img files to any Samsung phone. 
+
+`gui.py` is the main file , and `guiunstable.py` is a updated but unstable version.
 
 ## WARNING!!
 
