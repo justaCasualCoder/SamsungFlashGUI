@@ -1,8 +1,8 @@
 import sys
 import subprocess
 import os
-from PySide6.QtWidgets import QApplication, QMainWindow, QLabel, QLineEdit, QPushButton, QComboBox, QTextEdit, QWidget, QVBoxLayout, QHBoxLayout, QFileDialog, QMessageBox
-from PySide6.QtGui import QAction
+from PySide6.QtWidgets import *
+from PySide6.QtGui import *
 cwd = os.path.dirname(os.path.abspath(__file__))
 os.chdir(cwd)
 class Form(QMainWindow):
@@ -12,7 +12,7 @@ class Form(QMainWindow):
         self.setWindowTitle("SamsungFlashGUI")
         # Create widgets
         self.label = QLabel(self)
-        self.label.setText("Please select your IMG to Flash & Partiton.")
+        self.label.setText("Please select your IMG to Flash & partiton")
         self.filenameentry = QLineEdit("twrp.img")
         self.chooseimage = QPushButton("Choose Image")
         self.flash = QPushButton("Flash")
