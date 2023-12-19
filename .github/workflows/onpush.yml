@@ -6,8 +6,8 @@ on:
   workflow_dispatch: {}
   push:
     paths:
-     - '.github/workflows/nightlybuild.yml'
-     - 'gui.py'
+     - '.github/workflows/onpush.yml'
+     - 'guiunstable.py'
 
 jobs:
   build:
