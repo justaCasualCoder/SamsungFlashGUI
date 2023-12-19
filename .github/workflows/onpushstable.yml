@@ -40,7 +40,7 @@ jobs:
     - name: Update nightly release
       uses: pyTooling/Actions/releaser@r0
       with:
-        tag: nightly
+        tag: latest_untested
         rm: true
         token: ${{ secrets.GITHUB_TOKEN }}
         files: dist/*
