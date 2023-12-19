@@ -2,6 +2,8 @@ import sys
 import subprocess
 import os
 import re
+import requests # Needed for Downloading TWRP
+from bs4 import BeautifulSoup # Needed for Downloading TWRP
 from PySide6.QtWidgets import (
     QApplication,
     QMainWindow,
@@ -9,7 +11,6 @@ from PySide6.QtWidgets import (
     QLineEdit,
     QPushButton,
     QComboBox,
-    QTextEdit,
     QWidget,
     QVBoxLayout,
     QHBoxLayout,
@@ -30,6 +31,7 @@ class Form(QMainWindow):
         super(Form, self).__init__(parent)
         self.setWindowTitle("SamsungFlashGUI")
         self.w = None
+        self.i = None
         # Create widgets
         self.label = QLabel(self)
         self.label.setText("Please select your IMG to Flash & Partiton.")
@@ -46,10 +48,10 @@ class Form(QMainWindow):
         aboutbutton.setStatusTip("About this project")
         aboutbutton.triggered.connect(self.aboutdialog)
         aboutbutton.setCheckable(False)
-        # AutoDetctedButton = QAction("Auto Mode", self)
-        # AutoDetctedButton.setStatusTip("Auto-Detcted Device")
-        # AutoDetctedButton.triggered.connect(self.detectdevice)
-        # AutoDetctedButton.setCheckable(False)
+        TWRPFlash = QAction("TWRP Flash", self)
+        TWRPFlash.setStatusTip("Download / Flash TWRP")
+        TWRPFlash.triggered.connect(self.TWRP_window)
+        TWRPFlash.setCheckable(False)
         quitbutton = QAction("Quit", self)
         quitbutton.setStatusTip("Exit this program")
         quitbutton.triggered.connect(lambda: quit())
@@ -58,7 +60,7 @@ class Form(QMainWindow):
         file_menu = menu.addMenu("File")
         file_menu.addAction(aboutbutton)
         file_menu.addAction(quitbutton)
-        # file_menu.addAction(AutoDetctedButton)
+        file_menu.addAction(TWRPFlash)
         widget = QWidget()
         widget.setLayout(layout)
         self.setCentralWidget(widget)
@@ -92,10 +94,13 @@ class Form(QMainWindow):
             self.w = FlashWindow()
             self.w.start_process(partition, image)
             self.w.show()
-
+    def TWRP_window(self, checked):
+        if self.i is None:
+            self.i = TWRPWindow()
+            self.i.show()
         else:
-            self.w.close()  # Close window.
-            self.w = None  # Discard reference.
+            self.i.close()  # Close window.
+            self.i = None  # Discard reference.
 
     def aboutdialog(self):
         logo = os.path.abspath(os.path.join(cwd, "python-logo-only.svg"))
@@ -112,12 +117,7 @@ class Form(QMainWindow):
         dlg = QMessageBox(self)
         dlg.setWindowTitle("About")
         dlg.setText(text)
-        button = dlg.exec()
-
-    # def detectdevice(self):
-    #     print("")
-
-
+        dlg.exec()
 class FlashWindow(QWidget):
     """
     This "window" is a QWidget. If it has no parent, it
@@ -179,11 +179,15 @@ class FlashWindow(QWidget):
         if "ERROR: Failed to detect compatible download-mode device." in stderr:
             print("No Device Attached!")
             info = "Failed to detect compatible download-mode device."
+            self.setWindowTitle("SamsungFlashGUI: Error!")
             button = QMessageBox.critical(self, "Error", f"{info}")
+            self.close()
         if "Failed to open file" in stderr:
             print("Can't find file!")
             info = f"Failed to find file: {self.image}"
+            self.setWindowTitle("SamsungFlashGUI: Error!")
             button = QMessageBox.critical(self, "Error", f"{info}")
+            self.close()
 
     def handle_state(self, state):
         states = {
@@ -212,7 +216,52 @@ class FlashWindow(QWidget):
         layout.addWidget(self.progress)
         layout.addWidget(self.text)
         self.setLayout(layout)
+class TWRPWindow(QWidget):
+    def download_flash(self):
+        # Huge thanks to the orginal creator - JBBgameich
+        # https://github.com/JBBgameich/halium-install
+        dlpagerequest = requests.get("https://dl.twrp.me/" + self.entry.text())
+        dlpage = BeautifulSoup(dlpagerequest.content, 'html.parser')
+        try:
+            dllinks = dlpage.table.find_all("a")
+        except:
+            print("E: Couldn't find a TWRP image for " + self.entry.text())
+            sys.exit(1)
+        dlurl = "https://dl.twrp.me" + dllinks[1]["href"].replace(".html", "")
+        imgname = dlurl.split("/")[-1]
+        print("I: Downloading " + dlurl)
+        referer_header = {"Referer": dlurl + ".html"}
+        response = requests.get(dlurl, headers=referer_header, stream=True)
+        total_size = int(response.headers.get('content-length', 0))
+        current_size = 0
+        with open(imgname, "wb") as f:
+            for chunk in response.iter_content():
+                if chunk:
+                    f.write(chunk)
+                    current_size += len(chunk)
+                    percent = current_size / total_size * 100
+                    self.progressb.setValue(percent)
+                    print(percent , end="\r")
+        self.close()
 
+        self.w = FlashWindow()
+        self.w.start_process("RECOVERY", imgname)
+        self.w.show()
+    def __init__(self):
+        super().__init__()
+        self.p = None
+        self.setWindowTitle("SamsungFlashGUI: Flash TWRP")
+        layoutv = QVBoxLayout()
+        self.entry = QLineEdit("jflte")
+        info1 = QLabel("Device Code:")
+        button = QPushButton("Download / Flash")
+        self.progressb = QProgressBar()
+        button.clicked.connect(self.download_flash)
+        layoutv.addWidget(info1)
+        layoutv.addWidget(self.entry)
+        layoutv.addWidget(button)
+        layoutv.addWidget(self.progressb)
+        self.setLayout(layoutv)
 
 if __name__ == "__main__":
     # Create the Qt Application

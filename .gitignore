@@ -12,3 +12,5 @@ t.py
 *.spec
 .venv/
 learning
+*.img
+_pycache_/
