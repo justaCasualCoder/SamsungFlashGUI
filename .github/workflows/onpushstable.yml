@@ -1,12 +1,13 @@
-name: Nightly Release
+name: Build On Push (Stable)
 
 on:
-  schedule:
-    - cron: '0 0 * * *' # Runs at midnight every day
+  # schedule:
+  #   - cron: '0 0 * * *' # Runs at midnight every day
   workflow_dispatch: {}
   push:
     paths:
      - '.github/workflows/nightlybuild.yml'
+     - 'gui.py'
 
 jobs:
   build:
