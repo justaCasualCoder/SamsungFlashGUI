@@ -2,8 +2,8 @@ import sys
 import subprocess
 import os
 import re
-import requests # Needed for Downloading TWRP
-from bs4 import BeautifulSoup # Needed for Downloading TWRP
+import requests  # Needed for Downloading TWRP
+from bs4 import BeautifulSoup  # Needed for Downloading TWRP
 from PySide6.QtWidgets import (
     QApplication,
     QMainWindow,
@@ -94,6 +94,7 @@ class Form(QMainWindow):
             self.w = FlashWindow()
             self.w.start_process(partition, image)
             self.w.show()
+
     def TWRP_window(self, checked):
         if self.i is None:
             self.i = TWRPWindow()
@@ -118,6 +119,8 @@ class Form(QMainWindow):
         dlg.setWindowTitle("About")
         dlg.setText(text)
         dlg.exec()
+
+
 class FlashWindow(QWidget):
     """
     This "window" is a QWidget. If it has no parent, it
@@ -149,7 +152,13 @@ class FlashWindow(QWidget):
             self.p.readyReadStandardError.connect(self.handle_stderr)
             self.p.stateChanged.connect(self.handle_state)
             self.p.finished.connect(self.process_finished)  # Clean up once complete.
-            command = ["heimdall", "flash", f"--{partition}", image]
+            heimdallbin = os.path.abspath(os.path.join(cwd, "heimdall"))
+            if os.path.exists(heimdallbin):
+                print("Using Bundled Heimdall")
+                heimdallbin = "./heimdall"
+            else:
+                heimdallbin = "/bin/heimdall"
+            command = [f"{heimdallbin}", "flash", f"--{partition}", image]
             self.p.start(command[0], command[1:])
 
     def handle_stdout(self):
@@ -216,12 +225,14 @@ class FlashWindow(QWidget):
         layout.addWidget(self.progress)
         layout.addWidget(self.text)
         self.setLayout(layout)
+
+
 class TWRPWindow(QWidget):
     def download_flash(self):
         # Huge thanks to the orginal creator - JBBgameich
         # https://github.com/JBBgameich/halium-install
         dlpagerequest = requests.get("https://dl.twrp.me/" + self.entry.text())
-        dlpage = BeautifulSoup(dlpagerequest.content, 'html.parser')
+        dlpage = BeautifulSoup(dlpagerequest.content, "html.parser")
         try:
             dllinks = dlpage.table.find_all("a")
         except:
@@ -232,7 +243,7 @@ class TWRPWindow(QWidget):
         print("I: Downloading " + dlurl)
         referer_header = {"Referer": dlurl + ".html"}
         response = requests.get(dlurl, headers=referer_header, stream=True)
-        total_size = int(response.headers.get('content-length', 0))
+        total_size = int(response.headers.get("content-length", 0))
         current_size = 0
         with open(imgname, "wb") as f:
             for chunk in response.iter_content():
@@ -241,12 +252,13 @@ class TWRPWindow(QWidget):
                     current_size += len(chunk)
                     percent = current_size / total_size * 100
                     self.progressb.setValue(percent)
-                    print(percent , end="\r")
+                    print(percent, end="\r")
         self.close()
 
         self.w = FlashWindow()
         self.w.start_process("RECOVERY", imgname)
         self.w.show()
+
     def __init__(self):
         super().__init__()
         self.p = None
@@ -262,6 +274,7 @@ class TWRPWindow(QWidget):
         layoutv.addWidget(button)
         layoutv.addWidget(self.progressb)
         self.setLayout(layoutv)
+
 
 if __name__ == "__main__":
     # Create the Qt Application
