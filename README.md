@@ -39,6 +39,25 @@ The following programs were used in the code:
 
 [Python](https://www.python.org/) (What it is coded in)
 
+# Windows
+When I first made this, it only worked on Linux. I am now starting to add Windows 10/11 support as well. If you try running the program on Windows, it expects that you have extracted `heimdall` into `heimdall/`. You can follow `heimdall/README.txt` for installing drivers. Here is a snippet:
+
+Driver Installation Instructions:
+
+1. Put your device into download mode and plug it in.
+
+2. Run zadig.exe included in the Drivers subdirectory.
+
+3. From the menu chose Options -> List All Devices.
+
+4. From the USB Device list chose "Samsung USB Composite Device".
+
+5. Press "Install Driver", click "Yes" to the prompt and if you receive
+       a message about being unable to verify the publisher of the driver.
+       Click "Install this driver software anyway".
+
+6. Done
+
 # Screenshots
 
 ![](screenshots/main_window.png "Main Window")
