@@ -228,15 +228,45 @@ class FlashWindow(QWidget):
 
 
 class TWRPWindow(QWidget):
+    def fetch_devices(self):
+        devices = {}
+        request = requests.get("https://twrp.me/Devices/Samsung")
+        parsed_request = BeautifulSoup(request.content, "html.parser")
+        device_elements = parsed_request.select("ul#post-list > p > strong > a")
+        # Iterate through the 'a' tags and extract the device name and corresponding code
+        for element in device_elements:
+            # Extract the device name (text within the 'a' tag)
+            device_name = element.text.strip()
+
+            # Split the href and get the last part, then remove the file extension
+            code = element["href"].split("/")[-1].split(".")[0]
+
+            # Extract all content within parentheses
+            parentheses_content = [content.strip() for content in device_name.split("(")[1:]]
+
+            # Use the second set of parentheses if it exists; otherwise, use the first set of parentheses
+            if len(parentheses_content) >= 2:
+                code = parentheses_content[1].split(")")[0]
+            else:
+                code = parentheses_content[0].split(")")[0]
+
+            # Remove spaces and convert to lowercase
+            code = code.replace(" ", "").lower()
+
+            # Add the device name and customized code to the dictionary
+            devices[device_name] = code
+        self.devices = devices
+        self.entry.addItems(list(self.devices.keys())) 
+        return devices
     def download_flash(self):
         # Huge thanks to the orginal creator - JBBgameich
         # https://github.com/JBBgameich/halium-install
-        dlpagerequest = requests.get("https://dl.twrp.me/" + self.entry.text())
+        dlpagerequest = requests.get("https://dl.twrp.me/" + self.current_code)
         dlpage = BeautifulSoup(dlpagerequest.content, "html.parser")
         try:
             dllinks = dlpage.table.find_all("a")
         except:
-            print("E: Couldn't find a TWRP image for " + self.entry.text())
+            print("E: Couldn't find a TWRP image for " + self.current_code)
             sys.exit(1)
         dlurl = "https://dl.twrp.me" + dllinks[1]["href"].replace(".html", "")
         imgname = dlurl.split("/")[-1]
@@ -252,7 +282,7 @@ class TWRPWindow(QWidget):
                     current_size += len(chunk)
                     percent = current_size / total_size * 100
                     self.progressb.setValue(percent)
-                    print(percent, end="\r")
+                    # print(percent, end="\r")
         self.close()
 
         self.w = FlashWindow()
@@ -264,16 +294,35 @@ class TWRPWindow(QWidget):
         self.p = None
         self.setWindowTitle("SamsungFlashGUI: Flash TWRP")
         layoutv = QVBoxLayout()
-        self.entry = QLineEdit("jflte")
-        info1 = QLabel("Device Code:")
+        self.get_device_button = QPushButton("Fetch Devices")
+        self.get_device_button.clicked.connect(self.fetch_devices)
+        self.entry = QComboBox()
+        # self.entry.addItems(list(self.devices.keys())) 
+        self.entry.currentIndexChanged.connect(self.device_selected)
+        info1 = QLabel("Device")
         button = QPushButton("Download / Flash")
         self.progressb = QProgressBar()
         button.clicked.connect(self.download_flash)
         layoutv.addWidget(info1)
         layoutv.addWidget(self.entry)
+        layoutv.addWidget(self.get_device_button)
         layoutv.addWidget(button)
         layoutv.addWidget(self.progressb)
         self.setLayout(layoutv)
+
+    def device_selected(self, index):
+        # Retrieve the selected device from the combobox
+        selected_device = self.sender().itemText(index)
+
+        # Find the corresponding custom code for the selected device from the stored devices dictionary
+        selected_device_code = self.devices.get(selected_device)
+
+        if selected_device_code is not None:
+            print(f"Selected device: {selected_device}, Code: {selected_device_code}")
+        else:
+            print(f"Code not found for {selected_device}")
+        self.current_code = selected_device_code
+        
 
 
 if __name__ == "__main__":
