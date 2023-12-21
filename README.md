@@ -4,10 +4,7 @@ A Python Script that can be used to easily flash .img files to any Samsung phone
 
 `gui.py` is the main file , and `guiunstable.py` is a updated but unstable version.
 
-## WARNING!!
-
-THIS PROJECT IS CURRENTLY BEING REDONE AND IS VERY UNSTABLE!
-
+See this [Github Project Page](https://github.com/users/justaCasualCoder/projects/1/views/1) for future goals.
 ### Running
 
 Install PySide6
