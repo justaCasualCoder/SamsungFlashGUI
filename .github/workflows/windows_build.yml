@@ -46,4 +46,10 @@ jobs:
           rm: true
           token: ${{ secrets.GITHUB_TOKEN }}
           files: dist/*
-  
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          dist/SamsungFlashGUI.exe
+      env:
+        tag_name: windows
