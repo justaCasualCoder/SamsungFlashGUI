@@ -25,8 +25,8 @@ jobs:
         pip install -r requirements.txt
     - name: Download Heimdall
       run: |
-        wget https://bitbucket.org/benjamin_dobell/heimdall/downloads/heimdall-suite-1.4.0-win32.zip
-        unzip heimdall-suite-1.4.0-win32.zip -d heimdall
+        Invoke-WebRequest https://bitbucket.org/benjamin_dobell/heimdall/downloads/heimdall-suite-1.4.0-win32.zip -OutFile heimdall.zip
+        unzip heimdall.zip -d heimdall
         mv "heimdall/Heimdall Suite/"* heimdall
         rm heimdall/Qt*
         rmdir "heimdall/Heimdall Suite"
