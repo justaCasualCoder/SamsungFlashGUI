@@ -1,0 +1,52 @@
+name: Build and Release
+
+on:
+  workflow_dispatch: {}
+  push:
+    paths:
+        - '.github/workflows/windows_build.yml'
+        - 'guiunstable.py'
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.x
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    - name: Download Heimdall
+      run: |
+        wget https://bitbucket.org/benjamin_dobell/heimdall/downloads/heimdall-suite-1.4.0-win32.zip
+        unzip heimdall-suite-1.4.0-win32.zip -d heimdall
+        mv "heimdall/Heimdall Suite/"* heimdall
+        rm heimdall/Qt*
+        rmdir "heimdall/Heimdall Suite"
+
+
+    - name: Build
+      run: |
+        pyinstaller --add-data ./heimdall:heimdall --onefile guiunstable.py
+        mv dist/* dist/SamsungFlashGUI.exe
+
+    - name: Create info file
+      run: |
+           echo -e "ref: $GITHUB_REF \ncommit: $GITHUB_SHA\nbuild: $(date +"%Y-%m-%dT%H:%M:%SZ")" \
+           > dist/info.txt
+
+    - name: Update Windows release
+      uses: pyTooling/Actions/releaser@r0
+      with:
+          tag: windows
+          rm: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+          files: dist/*
+  
