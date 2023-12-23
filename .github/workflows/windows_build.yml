@@ -38,10 +38,6 @@ jobs:
         pyinstaller --add-data ./heimdall:heimdall --onefile guiunstable.py
         mv dist/* dist/SamsungFlashGUI.exe
 
-    - name: Create info file
-      run: |
-           echo -e "ref: $GITHUB_REF \ncommit: $GITHUB_SHA\nbuild: $(date +"%Y-%m-%dT%H:%M:%SZ")" \
-           > dist/info.txt
 
     - name: Update Windows release
       uses: pyTooling/Actions/releaser@r0
