@@ -26,10 +26,11 @@ jobs:
     - name: Download Heimdall
       run: |
         Invoke-WebRequest https://bitbucket.org/benjamin_dobell/heimdall/downloads/heimdall-suite-1.4.0-win32.zip -OutFile heimdall.zip
-        unzip heimdall.zip -d heimdall
-        mv "heimdall/Heimdall Suite/"* heimdall
+        expand-archive -path heimdall.zip -DestinationPath heimdall
+        Move-Item -Path  "heimdall/Heimdall Suite/" -Destination heimdalll
+        rmdir -r heimdall
+        mv heimdalll heimdall
         rm heimdall/Qt*
-        rmdir "heimdall/Heimdall Suite"
 
 
     - name: Build
