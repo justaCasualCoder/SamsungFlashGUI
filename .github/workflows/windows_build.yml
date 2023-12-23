@@ -38,14 +38,6 @@ jobs:
         pyinstaller --add-data ./heimdall:heimdall --onefile guiunstable.py
         mv dist/* dist/SamsungFlashGUI.exe
 
-
-    - name: Update Windows release
-      uses: pyTooling/Actions/releaser@r0
-      with:
-          tag: windows
-          rm: true
-          token: ${{ secrets.GITHUB_TOKEN }}
-          files: dist/*
     - name: Release
       uses: softprops/action-gh-release@v1
       with:
