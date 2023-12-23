@@ -35,7 +35,7 @@ jobs:
 
     - name: Build
       run: |
-        pyinstaller --add-data ./heimdall:heimdall --add-data "./python-logo-only.svg:. --onefile -w guiunstable.py
+        pyinstaller --add-data ./heimdall:heimdall --add-data "./python-logo-only.svg:." --onefile -w guiunstable.py
         mv dist/* dist/SamsungFlashGUI.exe
 
     - name: Release
