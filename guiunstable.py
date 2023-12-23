@@ -152,7 +152,7 @@ class FlashWindow(QWidget):
             self.p.readyReadStandardError.connect(self.handle_stderr)
             self.p.stateChanged.connect(self.handle_state)
             self.p.finished.connect(self.process_finished)  # Clean up once complete.
-            heimdallbin = os.path.abspath(os.path.join(cwd, "heimdall"))
+            heimdallbin = os.path.abspath(os.path.join(cwd, "heimdall/heimdall_linux"))
             if os.name == 'nt':
                 print("Running on Windows!")
                 print("Running heimdall.exe")
@@ -160,7 +160,7 @@ class FlashWindow(QWidget):
             else:
                 if os.path.exists(heimdallbin):
                     print("Using Bundled Heimdall")
-                    heimdallbin = "./heimdall"
+                    heimdallbin = "./heimdall/heimdall_linux"
                 else:
                     heimdallbin = "/bin/heimdall"
             command = [f"{heimdallbin}", "flash", f"--{partition}", image]

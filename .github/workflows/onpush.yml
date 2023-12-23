@@ -24,12 +24,12 @@ jobs:
         python-version: '3.x' # Specify the Python version you need
 
     - name: Install dependencies
-      run: pip install pyinstaller PySide6 beautifulsoup4 requests
+      run: pip install -r requiremnts.txt
     - name: Install Heimdall
-      run: sudo apt install heimdall-flash -y
+      run: sudo apt update && sudo apt install heimdall-flash -y
 
     - name: Build executable
-      run: pyinstaller --onefile --noconsole --add-binary "/bin/heimdall:." --add-data "$(pwd)/python-logo-only.svg:." guiunstable.py && mv dist/guiunstable dist/LinuxGUI && chmod +x dist/LinuxGUI
+      run: pyinstaller --onefile --noconsole --add-binary "/bin/heimdall:heimdall/heimdall_linux" --add-data "$(pwd)/python-logo-only.svg:." guiunstable.py && mv dist/guiunstable dist/LinuxGUI && chmod +x dist/LinuxGUI
       working-directory: ${{ github.workspace }}
 
     - name: Create info file
