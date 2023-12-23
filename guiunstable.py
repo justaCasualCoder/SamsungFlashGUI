@@ -153,7 +153,7 @@ class FlashWindow(QWidget):
             self.p.stateChanged.connect(self.handle_state)
             self.p.finished.connect(self.process_finished)  # Clean up once complete.
             heimdallbin = os.path.abspath(os.path.join(cwd, "heimdall/heimdall_linux"))
-            if os.name == 'nt':
+            if os.name == "nt":
                 print("Running on Windows!")
                 print("Running heimdall.exe")
                 heimdallbin = "./heimdall/heimdall.exe"
@@ -247,7 +247,9 @@ class TWRPWindow(QWidget):
             code = element["href"].split("/")[-1].split(".")[0]
 
             # Extract all content within parentheses
-            parentheses_content = [content.strip() for content in device_name.split("(")[1:]]
+            parentheses_content = [
+                content.strip() for content in device_name.split("(")[1:]
+            ]
 
             # Use the second set of parentheses if it exists; otherwise, use the first set of parentheses
             if len(parentheses_content) >= 2:
@@ -261,8 +263,9 @@ class TWRPWindow(QWidget):
             # Add the device name and customized code to the dictionary
             devices[device_name] = code
         self.devices = devices
-        self.entry.addItems(list(self.devices.keys())) 
+        self.entry.addItems(list(self.devices.keys()))
         return devices
+
     def download_flash(self):
         # Huge thanks to the orginal creator - JBBgameich
         # https://github.com/JBBgameich/halium-install
@@ -302,7 +305,7 @@ class TWRPWindow(QWidget):
         self.get_device_button = QPushButton("Fetch Devices")
         self.get_device_button.clicked.connect(self.fetch_devices)
         self.entry = QComboBox()
-        # self.entry.addItems(list(self.devices.keys())) 
+        # self.entry.addItems(list(self.devices.keys()))
         self.entry.currentIndexChanged.connect(self.device_selected)
         info1 = QLabel("Device")
         button = QPushButton("Download / Flash")
@@ -327,7 +330,6 @@ class TWRPWindow(QWidget):
         else:
             print(f"Code not found for {selected_device}")
         self.current_code = selected_device_code
-        
 
 
 if __name__ == "__main__":
