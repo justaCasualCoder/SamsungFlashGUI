@@ -29,7 +29,7 @@ jobs:
       run: sudo apt update && sudo apt install heimdall-flash -y
 
     - name: Build executable
-      run: pyinstaller --onefile --noconsole --add-binary "/bin/heimdall:heimdall/heimdall_linux" --add-data "$(pwd)/python-logo-only.svg:." guiunstable.py && mv dist/guiunstable dist/LinuxGUI && chmod +x dist/LinuxGUI
+      run: pyinstaller --onefile --noconsole --add-binary "/bin/heimdall:heimdall/heimdall_linux" --add-data "$(pwd)/devices.json:." guiunstable.py && mv dist/guiunstable dist/LinuxGUI && chmod +x dist/LinuxGUI
       working-directory: ${{ github.workspace }}
 
     - name: Create info file

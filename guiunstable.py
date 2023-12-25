@@ -2,6 +2,7 @@ import sys
 import subprocess
 import os
 import re
+import json
 import requests  # Needed for Downloading TWRP
 from bs4 import BeautifulSoup  # Needed for Downloading TWRP
 from PySide6.QtWidgets import (
@@ -234,6 +235,12 @@ class FlashWindow(QWidget):
 
 class TWRPWindow(QWidget):
     def fetch_devices(self):
+        jsonfile = os.path.abspath(os.path.join(cwd, "devices.json"))
+        if os.path.exists(jsonfile):
+            with open(jsonfile, 'r') as file:
+                self.devices = json.load(file)
+                self.entry.addItems(list(self.devices.keys()))
+        return
         devices = {}
         request = requests.get("https://twrp.me/Devices/Samsung")
         parsed_request = BeautifulSoup(request.content, "html.parser")
@@ -264,6 +271,9 @@ class TWRPWindow(QWidget):
             devices[device_name] = code
         self.devices = devices
         self.entry.addItems(list(self.devices.keys()))
+        # Dump JSON to file
+        with open('devices.json', 'w') as file:
+            json.dump(devices, file)
         return devices
 
     def download_flash(self):
@@ -302,8 +312,6 @@ class TWRPWindow(QWidget):
         self.p = None
         self.setWindowTitle("SamsungFlashGUI: Flash TWRP")
         layoutv = QVBoxLayout()
-        self.get_device_button = QPushButton("Fetch Devices")
-        self.get_device_button.clicked.connect(self.fetch_devices)
         self.entry = QComboBox()
         # self.entry.addItems(list(self.devices.keys()))
         self.entry.currentIndexChanged.connect(self.device_selected)
@@ -313,10 +321,10 @@ class TWRPWindow(QWidget):
         button.clicked.connect(self.download_flash)
         layoutv.addWidget(info1)
         layoutv.addWidget(self.entry)
-        layoutv.addWidget(self.get_device_button)
         layoutv.addWidget(button)
         layoutv.addWidget(self.progressb)
         self.setLayout(layoutv)
+        self.fetch_devices()
 
     def device_selected(self, index):
         # Retrieve the selected device from the combobox
