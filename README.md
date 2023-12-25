@@ -7,10 +7,10 @@ A Python Script that can be used to easily flash .img files to any Samsung phone
 See this [Github Project Page](https://github.com/users/justaCasualCoder/projects/1/views/1) for future goals.
 ### Running
 
-Install PySide6
+Install requirments!
 
 ```bash
-pip install PySide6
+pip install -r requirements.txt
 ```
 
 Install Heimdall (Example on Debian):
@@ -19,7 +19,7 @@ Install Heimdall (Example on Debian):
 sudo apt install heimdall
 ```
 
-Download / save `gui.py` and run it. 
+Download / save `gui.py` (or `guiunstable.py`) and run it. 
 
 #### Building
 
@@ -46,19 +46,23 @@ Driver Installation Instructions:
 
 1. Put your device into download mode and plug it in.
 
-2. Run zadig.exe included in the Drivers subdirectory.
+2. Run `zadig.exe` included in the Drivers subdirectory.
 
 3. From the menu chose Options -> List All Devices.
 
-4. From the USB Device list chose "Samsung USB Composite Device".
+4. From the USB Device list pick "Samsung USB Composite Device".
 
 5. Press "Install Driver", click "Yes" to the prompt and if you receive
        a message about being unable to verify the publisher of the driver.
        Click "Install this driver software anyway".
 
 6. Done
+## Build (Windows)
+```bash
+pyinstaller --add-data ./heimdall:heimdall --add-data "./devices.json:." --add-data "./python-logo-only.svg:." --onefile -w guiunstable.py
+```
 
-# Screenshots
+# Screenshots (Not Updated!)
 
 ![](screenshots/main_window.png "Main Window")
 
