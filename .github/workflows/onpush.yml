@@ -24,7 +24,7 @@ jobs:
         python-version: '3.x' # Specify the Python version you need
 
     - name: Install dependencies
-      run: pip install -r requiremnts.txt
+      run: pip install -r requirments.txt
     - name: Install Heimdall
       run: sudo apt update && sudo apt install heimdall-flash -y
 
