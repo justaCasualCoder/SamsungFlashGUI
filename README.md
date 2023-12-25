@@ -62,11 +62,15 @@ Driver Installation Instructions:
 pyinstaller --add-data ./heimdall:heimdall --add-data "./devices.json:." --add-data "./python-logo-only.svg:." --onefile -w guiunstable.py
 ```
 
-# Screenshots (Not Updated!)
+# Screenshots
 
 ![](screenshots/main_window.png "Main Window")
 
 ![](screenshots/about_window.png "About Window")
+
+![](screenshots/error_window.png "Error Window")
+
+![](screenshots/flasher_window.png "Flasher Window")
 
 # Why?
 
