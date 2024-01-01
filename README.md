@@ -1,4 +1,6 @@
 # SamsungFlashGUI
+[![Github All Releases](https://img.shields.io/github/downloads/justaCasualCoder/SamsungFlashGUI/total.svg)]() ![GitHub closed issues](https://img.shields.io/github/issues-closed-raw/justaCasualCoder/SamsungFlashGUI) ![GitHub Repo stars](https://img.shields.io/github/stars/justaCasualCoder/SamsungFlashGUI)
+
 
 A Python Script that can be used to easily flash .img files to any Samsung phone. 
 
