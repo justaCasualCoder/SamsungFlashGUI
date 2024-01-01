@@ -4,13 +4,13 @@
 
 A Python Script that can be used to easily flash .img files to any Samsung phone. 
 
-`gui.py` is the main file , and `guiunstable.py` is a updated but unstable version.
+`gui.py` is the main file, and `guiunstable.py` is an updated but unstable version.
 
 See this [Github Project Page](https://github.com/users/justaCasualCoder/projects/1/views/1) for future goals.
 # Linux
 ### Running
 
-Install requirments!
+Install requirements!
 
 ```bash
 pip install -r requirements.txt
@@ -19,10 +19,10 @@ pip install -r requirements.txt
 Install Heimdall (Example on Debian):
 
 ```bash
-sudo apt install heimdall
+sudo apt install Heimdall
 ```
 
-Download / save `gui.py` (or `guiunstable.py`) and run it. 
+Download/save `gui.py` (or `guiunstable.py`) and run it. 
 
 ## Build (Linux)
 - Install dependencies:
@@ -33,7 +33,7 @@ pip install -r requirements.txt
 - Install Heimdall (Example on Debian):
 
 ```bash
-sudo apt install heimdall
+sudo apt install Heimdall
 ```
 - Build executable:
 ```bash
@@ -41,7 +41,7 @@ pyinstaller --onefile --noconsole --add-binary "/bin/heimdall:." --add-data "$(p
 ```
 
 # Windows
-When I first made this, it only worked on Linux. I am now starting to add Windows 10/11 support as well. If you try running the program on Windows, it expects that you have extracted `heimdall` into `heimdall/`. You can follow `heimdall/README.txt` for installing drivers. Here is a snippet:
+When I first made this, it only worked on Linux. I am now starting to add Windows 10/11 support as well. If you try running the program on Windows, it expects that you have extracted `Heimdall` into `Heimdall/`. You can follow `heimdall/README.txt` for installing drivers. Here is a snippet:
 
 Driver Installation Instructions:
 
@@ -49,11 +49,11 @@ Driver Installation Instructions:
 
 2. Run `zadig.exe` included in the Drivers subdirectory.
 
-3. From the menu chose Options -> List All Devices.
+3. From the menu choose Options -> List All Devices.
 
 4. From the USB Device list pick "Samsung USB Composite Device".
 
-5. Press "Install Driver", click "Yes" to the prompt and if you receive
+5. Press "Install Driver", click "Yes" to the prompt, and if you receive
        a message about being unable to verify the publisher of the driver.
        Click "Install this driver software anyway".
 
@@ -99,8 +99,8 @@ The following programs were used in the code:
 
 # Why?
 
-- I wanted a easy way to flash `*IMG`'s to Samsung devices
+- I wanted an easy way to flash `*IMG`'s to Samsung devices
 
-- The already made Heimdall-Frontend is awesome , but was overcomplicated for me.
+- The already-made Heimdall-Frontend is awesome, but was overcomplicated for me.
 
 - WHY NOT
