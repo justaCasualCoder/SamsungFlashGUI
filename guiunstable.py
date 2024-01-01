@@ -3,6 +3,7 @@ import subprocess
 import os
 import re
 import json
+import urllib.request  # Needed for Downloading TWRP
 import requests  # Needed for Downloading TWRP
 from bs4 import BeautifulSoup  # Needed for Downloading TWRP
 from PySide6.QtWidgets import (
@@ -237,7 +238,7 @@ class TWRPWindow(QWidget):
     def fetch_devices(self):
         jsonfile = os.path.abspath(os.path.join(cwd, "devices.json"))
         if os.path.exists(jsonfile):
-            with open(jsonfile, 'r') as file:
+            with open(jsonfile, "r") as file:
                 self.devices = json.load(file)
                 self.entry.addItems(list(self.devices.keys()))
         return
@@ -272,7 +273,7 @@ class TWRPWindow(QWidget):
         self.devices = devices
         self.entry.addItems(list(self.devices.keys()))
         # Dump JSON to file
-        with open('devices.json', 'w') as file:
+        with open("devices.json", "w") as file:
             json.dump(devices, file)
         return devices
 
@@ -286,25 +287,34 @@ class TWRPWindow(QWidget):
         except:
             print("E: Couldn't find a TWRP image for " + self.current_code)
             sys.exit(1)
-        dlurl = "https://dl.twrp.me" + dllinks[1]["href"].replace(".html", "")
-        imgname = dlurl.split("/")[-1]
-        print("I: Downloading " + dlurl)
-        referer_header = {"Referer": dlurl + ".html"}
-        response = requests.get(dlurl, headers=referer_header, stream=True)
-        total_size = int(response.headers.get("content-length", 0))
-        current_size = 0
-        with open(imgname, "wb") as f:
-            for chunk in response.iter_content():
-                if chunk:
-                    f.write(chunk)
-                    current_size += len(chunk)
-                    percent = current_size / total_size * 100
-                    self.progressb.setValue(percent)
-                    # print(percent, end="\r")
+        url = "https://dl.twrp.me" + dllinks[1]["href"].replace(".html", "")
+        print("I: Downloading " + url)
+        local_filename = url.split("/")[-1]
+        referer_url = url + ".html"
+
+        headers = {"Referer": referer_url}
+        request = urllib.request.Request(url, headers=headers)
+
+        with urllib.request.urlopen(request) as response, open(
+            local_filename, "wb"
+        ) as f:
+            total_size = int(response.info().get("Content-Length", 0))
+            block_size = 1024
+
+            current_size = 0
+            while True:
+                buffer = response.read(block_size)
+                if not buffer:
+                    break
+                f.write(buffer)
+                current_size += len(buffer)
+                percent = (current_size / total_size) * 100
+                print(f"\rDownloaded: {percent:.2f}%", end="", flush=True)
+                self.progressb.setValue(percent)
         self.close()
 
         self.w = FlashWindow()
-        self.w.start_process("RECOVERY", imgname)
+        self.w.start_process("RECOVERY", local_filename)
         self.w.show()
 
     def __init__(self):
