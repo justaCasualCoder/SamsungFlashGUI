@@ -24,6 +24,9 @@ from PySide6.QtWidgets import (
 from PySide6.QtGui import QAction
 from PySide6.QtCore import QProcess
 
+if os.name == "nt":
+    print("Running on Windows!")
+    import ctypes
 cwd = os.path.dirname(os.path.abspath(__file__))
 os.chdir(cwd)
 
@@ -46,6 +49,11 @@ class Form(QMainWindow):
         hbox = QHBoxLayout()
         buttonbox = QHBoxLayout()
         # Set up Menu Buttons
+        if os.name == "nt":
+            driverinstallb = QAction("Install Drivers (Windows)", self)
+            driverinstallb.setStatusTip("For Heimdall (Zadig)")
+            driverinstallb.triggered.connect(self.driverinstall)
+            driverinstallb.setCheckable(False)
         aboutbutton = QAction("About", self)
         aboutbutton.setStatusTip("About this project")
         aboutbutton.triggered.connect(self.aboutdialog)
@@ -63,6 +71,8 @@ class Form(QMainWindow):
         file_menu.addAction(aboutbutton)
         file_menu.addAction(quitbutton)
         file_menu.addAction(TWRPFlash)
+        if os.name == "nt":
+            file_menu.addAction(driverinstallb)
         widget = QWidget()
         widget.setLayout(layout)
         self.setCentralWidget(widget)
@@ -121,6 +131,41 @@ class Form(QMainWindow):
         dlg.setWindowTitle("About")
         dlg.setText(text)
         dlg.exec()
+
+    def driverinstall(self):
+        dlg = QMessageBox(self)
+        dlg.setIcon(QMessageBox.Question)
+        yes_button = dlg.addButton(QMessageBox.Yes)
+        no_button = dlg.addButton(QMessageBox.No)
+        dlg.setWindowTitle("Driver Install Directions")
+        dlg.setText(
+            """
+        <p>Driver Installation Instructions:</p>
+        <ol>
+        <li><p>Put your device into download mode and plug it in.</p>
+        </li>
+        <li><p>Run <code>zadig.exe</code> included in the Drivers subdirectory.</p>
+        </li>
+        <li><p>From the menu choose Options -&gt; List All Devices.</p>
+        </li>
+        <li><p>From the USB Device list pick &quot;Samsung USB Composite Device&quot;.</p>
+        </li>
+        <li><p>Press &quot;Install Driver&quot;, click &quot;Yes&quot; to the prompt, and if you receive</p>
+        <pre><code><span class="hljs-keyword">a</span> message about being unable <span class="hljs-built_in">to</span> verify <span class="hljs-keyword">the</span> publisher <span class="hljs-keyword">of</span> <span class="hljs-keyword">the</span> driver.
+        Click <span class="hljs-string">"Install this driver software anyway"</span>.
+        </code></pre></li>
+        <li><p>Done</p>
+        See <a href="https://github.com/justaCasualCoder/SamsungFlashGUI#windows">This</a> For the guide.
+        </li>
+        </ol>
+        <p>Would you like to continue?</p>
+        """
+        )
+        result = dlg.exec()
+        if result == QMessageBox.Yes:
+            file = os.path.abspath(os.path.join(cwd, "heimdall\Drivers\zadig.exe"))
+            command = ["powershell.exe", "-command", file]
+            subprocess.Popen(command)
 
 
 class FlashWindow(QWidget):
