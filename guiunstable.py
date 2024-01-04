@@ -3,6 +3,8 @@ import subprocess
 import os
 import re
 import json
+import atexit
+import tempfile
 import urllib.request  # Needed for Downloading TWRP
 import requests  # Needed for Downloading TWRP
 from bs4 import BeautifulSoup  # Needed for Downloading TWRP
@@ -35,6 +37,7 @@ class Form(QMainWindow):
     def __init__(self, parent=None):
         super(Form, self).__init__(parent)
         self.setWindowTitle("SamsungFlashGUI")
+        atexit.register(self.on_exit)
         self.w = None
         self.i = None
         # Create widgets
@@ -85,7 +88,10 @@ class Form(QMainWindow):
         layout.addWidget(self.flash)
         self.chooseimage.clicked.connect(self.Image)
         self.flash.clicked.connect(self.flash_window)
-
+    def on_exit(self):
+        if local_filename is not None:
+            print("Deleting Temp File...")
+            os.remove(local_filename)
     def Image(self):
         global filename
         file_dialog = QFileDialog()
@@ -334,7 +340,8 @@ class TWRPWindow(QWidget):
             sys.exit(1)
         url = "https://dl.twrp.me" + dllinks[1]["href"].replace(".html", "")
         print("I: Downloading " + url)
-        local_filename = url.split("/")[-1]
+        global local_filename
+        local_filename = tempfile.NamedTemporaryFile(suffix=".img", delete=False).name
         referer_url = url + ".html"
 
         headers = {"Referer": referer_url}
