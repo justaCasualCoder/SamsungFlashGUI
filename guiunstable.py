@@ -40,6 +40,8 @@ class Form(QMainWindow):
         atexit.register(self.on_exit)
         self.w = None
         self.i = None
+        global local_filename
+        local_filename = None
         # Create widgets
         self.label = QLabel(self)
         self.label.setText("Please select your IMG to Flash & Partiton.")
@@ -340,7 +342,6 @@ class TWRPWindow(QWidget):
             sys.exit(1)
         url = "https://dl.twrp.me" + dllinks[1]["href"].replace(".html", "")
         print("I: Downloading " + url)
-        global local_filename
         local_filename = tempfile.NamedTemporaryFile(suffix=".img", delete=False).name
         referer_url = url + ".html"
 
@@ -405,6 +406,7 @@ class TWRPWindow(QWidget):
 if __name__ == "__main__":
     # Create the Qt Application
     app = QApplication(sys.argv)
+    app.setStyle('fusion')
     # Create and show the form
     form = Form()
     form.show()
